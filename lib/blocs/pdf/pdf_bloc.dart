@@ -35,9 +35,8 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
         return;
       }
       
-      // Generate the PDF using the PDF service
-      final outputDir = '/storage/emulated/0/Download';
-      final pdfPath = await _pdfService.generateReportPdf(report, outputDir);
+      // Generate the PDF using the PDF service (uses default directory)
+      final pdfPath = await _pdfService.generateReportPdf(report);
       
       // Update the report with the PDF path
       await _reportRepository.setPdfPathForReport(report.id, pdfPath);
@@ -52,9 +51,8 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     try {
       emit(const PdfGenerating());
       
-      // Generate the PDF using the PDF service
-      final outputDir = '/storage/emulated/0/Download';
-      final pdfPath = await _pdfService.generateReportPdf(event.report, outputDir);
+      // Generate the PDF using the PDF service (uses default directory)
+      final pdfPath = await _pdfService.generateReportPdf(event.report);
       
       // Update the report with the PDF path
       await _reportRepository.setPdfPathForReport(event.report.id, pdfPath);

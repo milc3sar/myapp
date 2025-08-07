@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supervisor/services/pdf_service.dart';
+import 'package:supervisor/services/sample_data_factory.dart';
 import 'package:supervisor/domain/entities/report_entity.dart';
 import 'package:supervisor/domain/entities/supply_entity.dart';
 import 'package:supervisor/domain/entities/evidence_entity.dart';
@@ -142,19 +143,58 @@ void main() {
       expect(await file.length(), greaterThan(0));
     });
 
+    test('should generate PDF using sample data factory', () async {
+      // Arrange
+      final report = SampleDataFactory.createSampleReport();
+
+      // Act
+      final pdfPath = await pdfService.generateReportPdf(report, tempDir.path);
+
+      // Assert
+      expect(pdfPath, isNotNull);
+      final file = File(pdfPath);
+      expect(await file.exists(), isTrue);
+      expect(await file.length(), greaterThan(0));
+      
+      // Verify filename contains report ID
+      expect(pdfPath, contains(report.id.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_')));
+    });
+
+    test('should generate PDF for comprehensive report', () async {
+      // Arrange
+      final report = SampleDataFactory.createComprehensiveReport();
+
+      // Act
+      final pdfPath = await pdfService.generateReportPdf(report, tempDir.path);
+
+      // Assert
+      expect(pdfPath, isNotNull);
+      final file = File(pdfPath);
+      expect(await file.exists(), isTrue);
+      expect(await file.length(), greaterThan(0));
+      
+      // Comprehensive report should generate a larger PDF
+      expect(await file.length(), greaterThan(5000)); // At least 5KB
+    });
+
+    test('should generate PDF for minimal report', () async {
+      // Arrange
+      final report = SampleDataFactory.createMinimalReport();
+
+      // Act
+      final pdfPath = await pdfService.generateReportPdf(report, tempDir.path);
+
+      // Assert
+      expect(pdfPath, isNotNull);
+      final file = File(pdfPath);
+      expect(await file.exists(), isTrue);
+      expect(await file.length(), greaterThan(0));
+    });
+
     test('should create output directory if it does not exist', () async {
       // Arrange
       final nonExistentDir = '${tempDir.path}/non_existent_subdir';
-      final report = ReportEntity(
-        id: 'test-report-4',
-        supervisorName: 'Test Supervisor',
-        date: DateTime.now(),
-        subject: 'Test Subject',
-        activities: [],
-        supplies: [],
-        conclusions: [],
-        recommendations: [],
-      );
+      final report = SampleDataFactory.createMinimalReport();
 
       // Act
       final pdfPath = await pdfService.generateReportPdf(report, nonExistentDir);

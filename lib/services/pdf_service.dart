@@ -5,6 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:supervisor/domain/entities/report_entity.dart';
 import 'package:supervisor/domain/entities/supply_entity.dart';
 import 'package:supervisor/domain/entities/evidence_entity.dart';
+import 'package:supervisor/services/file_utils.dart';
 
 /// Service for generating PDF reports following the official GPC format
 class PdfService {
@@ -21,7 +22,10 @@ class PdfService {
 
   /// Generates a PDF report for the given report entity
   /// Returns the file path where the PDF was saved
-  Future<String> generateReportPdf(ReportEntity report, String outputDir) async {
+  /// If outputDir is null, uses the default PDF directory
+  Future<String> generateReportPdf(ReportEntity report, [String? outputDir]) async {
+    final directory = outputDir ?? await FileUtils.getDefaultPdfDirectory();
+    
     final pdf = pw.Document();
 
     // Add pages to the PDF
@@ -59,12 +63,12 @@ class PdfService {
     );
 
     // Save the PDF
-    final fileName = 'informe_supervision_${report.id}_${_formatDateForFilename(report.date)}.pdf';
-    final filePath = '$outputDir/$fileName';
+    final fileName = 'informe_supervision_${FileUtils.sanitizeFilename(report.id)}_${_formatDateForFilename(report.date)}.pdf';
+    final filePath = '$directory/$fileName';
     final file = File(filePath);
     
     // Ensure the directory exists
-    await file.parent.create(recursive: true);
+    await FileUtils.ensureDirectoryExists(directory);
     
     // Write the PDF bytes to file
     final bytes = await pdf.save();
