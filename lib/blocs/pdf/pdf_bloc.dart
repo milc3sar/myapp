@@ -1,5 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supervisor/domain/repositories/report_repository.dart';
+import 'package:supervisor/services/pdf_service.dart';
+import 'package:share_plus/share_plus.dart';
+import 'dart:io';
 
 import 'pdf_event.dart';
 import 'pdf_state.dart';
@@ -7,9 +10,13 @@ import 'pdf_state.dart';
 /// BLoC for managing PDF-related operations
 class PdfBloc extends Bloc<PdfEvent, PdfState> {
   final ReportRepository _reportRepository;
+  final PdfService _pdfService;
 
-  PdfBloc({required ReportRepository reportRepository})
-      : _reportRepository = reportRepository,
+  PdfBloc({
+    required ReportRepository reportRepository,
+    PdfService? pdfService,
+  })  : _reportRepository = reportRepository,
+        _pdfService = pdfService ?? PdfService(),
         super(const PdfInitial()) {
     on<GeneratePdf>(_onGeneratePdf);
     on<GeneratePdfWithReport>(_onGeneratePdfWithReport);
@@ -28,15 +35,8 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
         return;
       }
       
-      // TODO: Implement PDF generation using a PDF service
-      // This is a placeholder implementation
-      // In a real implementation, we would use a PDF service to generate the PDF
-      
-      // For now, we'll just simulate PDF generation with a delay
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Simulate a PDF path
-      final pdfPath = '/storage/emulated/0/Download/report_${report.id}.pdf';
+      // Generate the PDF using the PDF service (uses default directory)
+      final pdfPath = await _pdfService.generateReportPdf(report);
       
       // Update the report with the PDF path
       await _reportRepository.setPdfPathForReport(report.id, pdfPath);
@@ -51,15 +51,8 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     try {
       emit(const PdfGenerating());
       
-      // TODO: Implement PDF generation using a PDF service
-      // This is a placeholder implementation
-      // In a real implementation, we would use a PDF service to generate the PDF
-      
-      // For now, we'll just simulate PDF generation with a delay
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Simulate a PDF path
-      final pdfPath = '/storage/emulated/0/Download/report_${event.report.id}.pdf';
+      // Generate the PDF using the PDF service (uses default directory)
+      final pdfPath = await _pdfService.generateReportPdf(event.report);
       
       // Update the report with the PDF path
       await _reportRepository.setPdfPathForReport(event.report.id, pdfPath);
@@ -74,14 +67,27 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     try {
       emit(const PdfSharing());
       
-      // TODO: Implement PDF sharing using the Share Plus package
-      // This is a placeholder implementation
-      // In a real implementation, we would use the Share Plus package to share the PDF
+      // Check if the PDF file exists
+      final file = File(event.pdfPath);
+      if (!await file.exists()) {
+        emit(const PdfOperationFailure('PDF file not found'));
+        return;
+      }
       
-      // For now, we'll just use the Share.shareFiles method
-      // await Share.shareFiles([event.pdfPath], text: 'Sharing report PDF');
+      // Share the PDF using the Share Plus package
+      final result = await Share.shareXFiles(
+        [XFile(event.pdfPath)],
+        text: 'Informe de Supervisión Técnica - GPC',
+        subject: 'Informe de Supervisión',
+      );
       
-      emit(const PdfShared('PDF shared successfully'));
+      if (result.status == ShareResultStatus.success) {
+        emit(const PdfShared('PDF shared successfully'));
+      } else if (result.status == ShareResultStatus.dismissed) {
+        emit(const PdfShared('Share was cancelled'));
+      } else {
+        emit(const PdfOperationFailure('Failed to share PDF'));
+      }
     } catch (e) {
       emit(PdfOperationFailure('Failed to share PDF: ${e.toString()}'));
     }
@@ -89,12 +95,16 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
 
   Future<void> _onPreviewPdf(PreviewPdf event, Emitter<PdfState> emit) async {
     try {
-      // TODO: Implement PDF preview
-      // This is a placeholder implementation
-      // In a real implementation, we would navigate to a PDF preview screen
+      // Check if the PDF file exists
+      final file = File(event.pdfPath);
+      if (!await file.exists()) {
+        emit(const PdfOperationFailure('PDF file not found'));
+        return;
+      }
       
-      // For now, we'll just emit a success state
-      emit(const PdfShared('PDF preview opened'));
+      // For PDF preview, we can use the native system to open the PDF
+      // This could be extended to implement a custom PDF viewer if needed
+      emit(PdfShared('PDF ready for preview at: ${event.pdfPath}'));
     } catch (e) {
       emit(PdfOperationFailure('Failed to preview PDF: ${e.toString()}'));
     }
