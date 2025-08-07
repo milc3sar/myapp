@@ -14,11 +14,13 @@ abstract class Supply with _$Supply {
     @HiveField(0) required String id,
     @HiveField(1) required String code,
     @HiveField(2) required List<Evidence> evidences,
+    @HiveField(3) required DateTime createdAt,
   }) = _Supply;
 
   factory Supply.create({
     required String code,
     List<Evidence> evidences = const [],
+    DateTime? createdAt,
   }) {
     // Validate that code is 8 digits
     if (code.length != 8 || int.tryParse(code) == null) {
@@ -29,6 +31,7 @@ abstract class Supply with _$Supply {
       id: const Uuid().v4(),
       code: code,
       evidences: evidences,
+      createdAt: createdAt ?? DateTime.now(),
     );
   }
 
@@ -51,19 +54,22 @@ class SupplyAdapter extends TypeAdapter<Supply> {
       id: fields[0] as String,
       code: fields[1] as String,
       evidences: (fields[2] as List).cast<Evidence>(),
+      createdAt: fields[3] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, Supply obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.code)
       ..writeByte(2)
-      ..write(obj.evidences);
+      ..write(obj.evidences)
+      ..writeByte(3)
+      ..write(obj.createdAt);
   }
 
   @override

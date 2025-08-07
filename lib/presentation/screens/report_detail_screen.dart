@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supervisor/blocs/report/report_bloc.dart';
 import 'package:supervisor/blocs/report/report_event.dart';
 import 'package:supervisor/blocs/report/report_state.dart';
 import 'package:supervisor/domain/entities/report_entity.dart';
 import 'package:supervisor/domain/entities/supply_entity.dart';
+import 'package:uuid/uuid.dart';
 
 /// Screen that displays the details of a report
 /// Allows selecting activities, viewing supplies, and generating PDF
@@ -81,18 +83,19 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
             }
             return _buildReportDetails(context, _report);
           } else {
+            // Show empty state instead of error screen
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
-                    Icons.error_outline,
+                    Icons.description_outlined,
                     size: 80,
-                    color: Colors.red,
+                    color: Colors.grey,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Error al cargar el reporte',
+                    'No se pudo cargar el reporte',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.grey[700],
@@ -124,13 +127,7 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
                     width: 160, // Fixed width for both buttons
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        // This is a placeholder for the "Add Supply" functionality
-                        // Not implementing as per requirements
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Funcionalidad de agregar suministro no implementada'),
-                          ),
-                        );
+                        _showAddSupplyDialog(context);
                       },
                       icon: const Icon(Icons.add_box),
                       label: const Text('Suministro'),
@@ -348,5 +345,73 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  void _showAddSupplyDialog(BuildContext context) {
+    final TextEditingController codeController = TextEditingController();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Agregar Suministro'),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: codeController,
+              decoration: const InputDecoration(
+                labelText: 'Código de Suministro',
+                hintText: 'Ingrese un código de 8 dígitos',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(8),
+              ],
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese un código';
+                }
+                if (value.length != 8) {
+                  return 'El código debe tener 8 dígitos';
+                }
+                return null;
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  // Create a new supply entity with current timestamp
+                  final supply = SupplyEntity(
+                    id: const Uuid().v4(),
+                    code: codeController.text,
+                    evidences: const [],
+                    createdAt: DateTime.now(),
+                  );
+                  
+                  // Add the supply to the report
+                  context.read<ReportBloc>().add(
+                    AddSupplyToReport(_report.id, supply),
+                  );
+                  
+                  Navigator.of(dialogContext).pop();
+                }
+              },
+              child: const Text('Crear'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

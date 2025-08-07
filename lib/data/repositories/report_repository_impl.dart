@@ -180,6 +180,7 @@ class ReportRepositoryImpl implements ReportRepository {
     return SupplyEntity(
       id: supply.id,
       code: supply.code,
+      createdAt: supply.createdAt,
       evidences: supply.evidences.map((e) => EvidenceEntity(
         id: e.id,
         imagePath: e.imagePath,
@@ -196,6 +197,7 @@ class ReportRepositoryImpl implements ReportRepository {
     return Supply(
       id: entity.id,
       code: entity.code,
+      createdAt: entity.createdAt,
       evidences: entity.evidences.map((e) => Evidence(
         id: e.id,
         imagePath: e.imagePath,

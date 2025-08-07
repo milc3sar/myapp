@@ -75,6 +75,7 @@ class SupplyBloc extends Bloc<SupplyEvent, SupplyState> {
         id: const Uuid().v4(),
         code: event.code,
         evidences: const [],
+        createdAt:  DateTime.now()
       );
       
       // Save the supply

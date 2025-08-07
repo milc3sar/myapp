@@ -38,11 +38,15 @@ class LoadSupply extends SupplyEvent {
 /// Event to create a new supply
 class CreateSupply extends SupplyEvent {
   final String code;
+  final String reportId;
 
-  const CreateSupply(this.code);
+  const CreateSupply({
+    required this.code,
+    required this.reportId,
+  });
 
   @override
-  List<Object?> get props => [code];
+  List<Object?> get props => [code, reportId];
 }
 
 /// Event to update an existing supply

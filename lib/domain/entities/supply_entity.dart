@@ -7,26 +7,30 @@ class SupplyEntity extends Equatable {
   final String id;
   final String code;
   final List<EvidenceEntity> evidences;
+  final DateTime createdAt;
 
   const SupplyEntity({
     required this.id,
     required this.code,
     required this.evidences,
+    required this.createdAt,
   });
 
   @override
-  List<Object?> get props => [id, code, evidences];
+  List<Object?> get props => [id, code, evidences, createdAt];
 
   /// Creates a copy of this SupplyEntity with the given fields replaced with the new values
   SupplyEntity copyWith({
     String? id,
     String? code,
     List<EvidenceEntity>? evidences,
+    DateTime? createdAt,
   }) {
     return SupplyEntity(
       id: id ?? this.id,
       code: code ?? this.code,
       evidences: evidences ?? this.evidences,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 

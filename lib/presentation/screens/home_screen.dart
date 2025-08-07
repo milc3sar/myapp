@@ -37,7 +37,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: BlocBuilder<ReportBloc, ReportState>(
+      body: BlocConsumer<ReportBloc, ReportState>(
+        listener: (context, state) {
+          if (state is ReportOperationFailure) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
+                ),
+              );
+          }
+        },
         builder: (context, state) {
           if (state is ReportLoading) {
             return const Center(
@@ -45,35 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           } else if (state is ReportsLoaded) {
             return _buildReportsList(context, state.reports);
-          } else if (state is ReportOperationFailure) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 80,
-                    color: Colors.red,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Error: ${state.message}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[700],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ReportBloc>().add(const LoadReports());
-                    },
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              ),
-            );
           } else {
             return _buildEmptyState(context);
           }

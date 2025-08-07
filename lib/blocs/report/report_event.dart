@@ -139,3 +139,17 @@ class SetPdfPathForReport extends ReportEvent {
   @override
   List<Object?> get props => [reportId, pdfPath];
 }
+
+/// Event to create a supply with a code and add it to a report
+class CreateSupplyAndAddToReport extends ReportEvent {
+  final String reportId;
+  final String code;
+
+  const CreateSupplyAndAddToReport({
+    required this.reportId,
+    required this.code,
+  });
+
+  @override
+  List<Object?> get props => [reportId, code];
+}

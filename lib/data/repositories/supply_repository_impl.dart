@@ -85,6 +85,7 @@ class SupplyRepositoryImpl implements SupplyRepository {
       id: supply.id,
       code: supply.code,
       evidences: supply.evidences.map(_mapEvidenceToEntity).toList(),
+      createdAt: supply.createdAt,
     );
   }
 
@@ -93,6 +94,7 @@ class SupplyRepositoryImpl implements SupplyRepository {
       id: entity.id,
       code: entity.code,
       evidences: entity.evidences.map(_mapEntityToEvidence).toList(),
+      createdAt: entity.createdAt,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supervisor/domain/entities/report_entity.dart';
+import 'package:supervisor/domain/entities/supply_entity.dart';
 import 'package:supervisor/domain/repositories/report_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,6 +26,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     on<AddRecommendationToReport>(_onAddRecommendationToReport);
     on<RemoveRecommendationFromReport>(_onRemoveRecommendationFromReport);
     on<SetPdfPathForReport>(_onSetPdfPathForReport);
+    on<CreateSupplyAndAddToReport>(_onCreateSupplyAndAddToReport);
   }
 
   Future<void> _onLoadReports(LoadReports event, Emitter<ReportState> emit) async {
@@ -179,6 +181,36 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       add(LoadReport(event.reportId));
     } catch (e) {
       emit(ReportOperationFailure('Failed to set PDF path for report: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onCreateSupplyAndAddToReport(CreateSupplyAndAddToReport event, Emitter<ReportState> emit) async {
+    try {
+      emit(const ReportLoading());
+      
+      // Validate supply code (8 digits)
+      if (event.code.length != 8 || int.tryParse(event.code) == null) {
+        emit(const ReportOperationFailure('Supply code must be 8 digits'));
+        return;
+      }
+      
+      // Create a new supply entity
+      final supply = SupplyEntity(
+        id: const Uuid().v4(),
+        code: event.code,
+        evidences: const [],
+        createdAt: DateTime.now(),
+      );
+      
+      // Add the supply to the report
+      await _reportRepository.addSupplyToReport(event.reportId, supply);
+      
+      emit(const ReportOperationSuccess('Supply created and added to report successfully'));
+      
+      // Reload the report to update the UI
+      add(LoadReport(event.reportId));
+    } catch (e) {
+      emit(ReportOperationFailure('Failed to create and add supply to report: ${e.toString()}'));
     }
   }
 }
