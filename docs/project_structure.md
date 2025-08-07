@@ -16,6 +16,10 @@ lib/
 │   ├── repositories/       # Repositorios para acceso a datos
 │   └── datasources/        # Fuentes de datos (local, remoto)
 │
+├── domain/                 # Capa de dominio
+│   ├── entities/           # Entidades de dominio
+│   └── repositories/       # Interfaces de repositorios
+│
 ├── presentation/           # Capa de presentación
 │   ├── screens/            # Pantallas principales
 │   ├── widgets/            # Widgets reutilizables
@@ -40,9 +44,17 @@ lib/
 - **data/models/report.dart**: Modelo para representar un reporte completo.
 - **data/models/supply.dart**: Modelo para representar un suministro con sus evidencias.
 - **data/models/evidence.dart**: Modelo para representar una evidencia (foto + observación).
-- **data/repositories/report_repository.dart**: Interfaz para operaciones con reportes.
-- **data/repositories/supply_repository.dart**: Interfaz para operaciones con suministros.
+- **data/repositories/report_repository_impl.dart**: Implementación concreta del repositorio de reportes.
+- **data/repositories/supply_repository_impl.dart**: Implementación concreta del repositorio de suministros.
 - **data/datasources/local_storage.dart**: Implementación de almacenamiento local.
+
+### Capa de Dominio
+
+- **domain/entities/report_entity.dart**: Entidad de dominio para representar un reporte.
+- **domain/entities/supply_entity.dart**: Entidad de dominio para representar un suministro.
+- **domain/entities/evidence_entity.dart**: Entidad de dominio para representar una evidencia.
+- **domain/repositories/report_repository.dart**: Interfaz para operaciones con reportes.
+- **domain/repositories/supply_repository.dart**: Interfaz para operaciones con suministros.
 
 ### Capa de BLoC
 
