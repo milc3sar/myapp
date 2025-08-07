@@ -12,8 +12,8 @@ import 'package:supervisor/data/repositories/report_repository_impl.dart';
 import 'package:supervisor/data/repositories/supply_repository_impl.dart';
 import 'package:supervisor/domain/repositories/report_repository.dart';
 import 'package:supervisor/domain/repositories/supply_repository.dart';
-import 'package:supervisor/presentation/screens/home_screen.dart';
 import 'package:supervisor/presentation/themes/app_theme.dart';
+import 'package:supervisor/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,11 +59,11 @@ class SupervisorApp extends StatelessWidget {
           create: (context) => PdfBloc(reportRepository: reportRepository),
         ),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'Supervisión',
         theme: AppTheme.lightTheme,
-        home: const HomeScreen(),
         debugShowCheckedModeBanner: false,
+        routerConfig: router,
       ),
     );
   }

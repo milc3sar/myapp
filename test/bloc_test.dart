@@ -1,23 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supervisor/blocs/pdf/pdf_bloc.dart';
-import 'package:supervisor/blocs/pdf/pdf_event.dart';
 import 'package:supervisor/blocs/pdf/pdf_state.dart';
 import 'package:supervisor/blocs/report/report_bloc.dart';
-import 'package:supervisor/blocs/report/report_event.dart';
 import 'package:supervisor/blocs/report/report_state.dart';
 import 'package:supervisor/blocs/supply/supply_bloc.dart';
-import 'package:supervisor/blocs/supply/supply_event.dart';
 import 'package:supervisor/blocs/supply/supply_state.dart';
 import 'package:supervisor/data/datasources/local_storage.dart';
-import 'package:supervisor/data/models/evidence.dart';
-import 'package:supervisor/data/models/report.dart';
-import 'package:supervisor/data/models/supply.dart';
-import 'package:supervisor/data/repositories/report_repository_impl.dart';
-import 'package:supervisor/data/repositories/supply_repository_impl.dart';
-import 'package:supervisor/domain/entities/evidence_entity.dart';
-import 'package:supervisor/domain/entities/report_entity.dart';
-import 'package:supervisor/domain/entities/supply_entity.dart';
 import 'package:supervisor/domain/repositories/report_repository.dart';
 import 'package:supervisor/domain/repositories/supply_repository.dart';
 

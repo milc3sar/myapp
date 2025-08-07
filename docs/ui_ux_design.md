@@ -28,7 +28,7 @@ Este documento describe el diseño de la interfaz de usuario y la experiencia de
 **Descripción**: Pantalla principal que muestra los reportes recientes y permite crear uno nuevo.
 
 **Elementos UI**:
-- Lista de reportes recientes (con fecha y asunto)
+- Lista de reportes recientes (con fecha, hora y asunto)
 - Botón flotante para crear nuevo reporte
 - Menú de opciones (configuración, acerca de)
 
@@ -209,20 +209,20 @@ Este documento describe el diseño de la interfaz de usuario y la experiencia de
 │ Supervisión de Obras      ⋮     │
 ├─────────────────────────────────┤
 │                                 │
-│  ┌───────────────────────────┐  │
-│  │ Reporte #123 - 05/08/2025 │  │
-│  │ Supervisión Zona Norte    │  │
-│  └───────────────────────────┘  │
+│  ┌─────────────────────────────────┐  │
+│  │ Reporte #123 - 05/08/2025 14:30 │  │
+│  │ Supervisión Zona Norte          │  │
+│  └─────────────────────────────────┘  │
 │                                 │
-│  ┌───────────────────────────┐  │
-│  │ Reporte #122 - 04/08/2025 │  │
-│  │ Mantenimiento Preventivo  │  │
-│  └───────────────────────────┘  │
+│  ┌─────────────────────────────────┐  │
+│  │ Reporte #122 - 04/08/2025 09:15 │  │
+│  │ Mantenimiento Preventivo        │  │
+│  └─────────────────────────────────┘  │
 │                                 │
-│  ┌───────────────────────────┐  │
-│  │ Reporte #121 - 03/08/2025 │  │
-│  │ Control de Pérdidas       │  │
-│  └───────────────────────────┘  │
+│  ┌─────────────────────────────────┐  │
+│  │ Reporte #121 - 03/08/2025 16:45 │  │
+│  │ Control de Pérdidas             │  │
+│  └─────────────────────────────────┘  │
 │                                 │
 │                                 │
 │                                 │
@@ -246,25 +246,54 @@ Este documento describe el diseño de la interfaz de usuario y la experiencia de
 │  │ Juan Pérez                │  │
 │  └───────────────────────────┘  │
 │                                 │
-│  Fecha:                         │
-│  ┌───────────────────────────┐  │
-│  │ 06/08/2025                │  │
-│  └───────────────────────────┘  │
-│                                 │
 │  Asunto:                        │
 │  ┌───────────────────────────┐  │
 │  │ Supervisión Zona Este     │  │
 │  └───────────────────────────┘  │
 │                                 │
-│  Actividades realizadas:        │
-│  ☑ Control de pérdidas          │
-│  ☑ Barreras técnicas            │
-│  ☐ Mantenimiento preventivo     │
-│  ☐ Mantenimiento correctivo     │
-│                                 │
 │  ┌───────────────────────────┐  │
 │  │        CONTINUAR          │  │
 │  └───────────────────────────┘  │
+└─────────────────────────────────┘
+```
+
+### Detalles del Reporte
+```
+┌─────────────────────────────────┐
+│ Detalles del Reporte      ⋮     │
+├─────────────────────────────────┤
+│                                 │
+│  ┌───────────────────────────┐  │
+│  │ Información del Reporte   │  │
+│  │ ─────────────────────────│  │
+│  │ Supervisor: Juan Pérez    │  │
+│  │ Asunto: Supervisión Zona  │  │
+│  │ Fecha: 07/08/2025 14:30   │  │
+│  └───────────────────────────┘  │
+│                                 │
+│  ┌───────────────────────────┐  │
+│  │ Actividades Realizadas    │  │
+│  │ ─────────────────────────│  │
+│  │ ☑ Control de pérdidas     │  │
+│  │ ☑ Barreras técnicas       │  │
+│  │ ☐ Mantenimiento preventivo│  │
+│  │ ☐ Mantenimiento correctivo│  │
+│  └───────────────────────────┘  │
+│                                 │
+│  ┌───────────────────────────┐  │
+│  │ Suministros               │  │
+│  │ ─────────────────────────│  │
+│  │ Código: 12345678         │  │
+│  │ Evidencias: 3            │  │
+│  │                          │  │
+│  │ Código: 87654321         │  │
+│  │ Evidencias: 2            │  │
+│  └───────────────────────────┘  │
+│                                 │
+│  ┌─────────────┐ ┌─────────┐   │
+│  │ AGREGAR     │ │ INFORMAR│   │
+│  │ SUMINISTRO  │ │ (PDF)   │   │
+│  └─────────────┘ └─────────┘   │
 └─────────────────────────────────┘
 ```
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supervisor/blocs/report/report_bloc.dart';
 import 'package:supervisor/blocs/report/report_event.dart';
 import 'package:supervisor/blocs/report/report_state.dart';
@@ -7,14 +8,23 @@ import 'package:supervisor/domain/entities/report_entity.dart';
 
 /// Home screen of the application
 /// Shows a list of recent reports and allows creating a new one
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
     // Load reports when the screen is first built
     context.read<ReportBloc>().add(const LoadReports());
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Supervisión'),
@@ -97,7 +107,12 @@ class HomeScreen extends StatelessWidget {
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // TODO: Navigate to report detail screen
+              // Navigate to report detail screen using go_router
+              context.pushNamed(
+                'report_detail',
+                pathParameters: {'reportId': report.id},
+              );
+              // No need for .then() callback as reports are reloaded by the MyRouteObserver in router.dart
             },
           ),
         );
@@ -140,7 +155,8 @@ class HomeScreen extends StatelessWidget {
     final supervisorNameController = TextEditingController();
     final subjectController = TextEditingController();
     final formKey = GlobalKey<FormState>();
-    final activities = [false, false, false, false]; // Control Pérdidas, Barreras Técnicas, Mant. Preventivo, Mant. Correctivo
+    // Activities are now set to false by default and will be selected in the report detail screen
+    final activities = [false, false, false, false]; 
 
     showDialog(
       context: context,
@@ -178,52 +194,7 @@ class HomeScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
-                  const Text('Actividades realizadas:'),
-                  StatefulBuilder(
-                    builder: (context, setState) {
-                      return Column(
-                        children: [
-                          CheckboxListTile(
-                            title: const Text('Control de Pérdidas'),
-                            value: activities[0],
-                            onChanged: (value) {
-                              setState(() {
-                                activities[0] = value ?? false;
-                              });
-                            },
-                          ),
-                          CheckboxListTile(
-                            title: const Text('Barreras Técnicas'),
-                            value: activities[1],
-                            onChanged: (value) {
-                              setState(() {
-                                activities[1] = value ?? false;
-                              });
-                            },
-                          ),
-                          CheckboxListTile(
-                            title: const Text('Mantenimiento Preventivo'),
-                            value: activities[2],
-                            onChanged: (value) {
-                              setState(() {
-                                activities[2] = value ?? false;
-                              });
-                            },
-                          ),
-                          CheckboxListTile(
-                            title: const Text('Mantenimiento Correctivo'),
-                            value: activities[3],
-                            onChanged: (value) {
-                              setState(() {
-                                activities[3] = value ?? false;
-                              });
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                  // Activities selection removed as per requirements
                 ],
               ),
             ),
@@ -238,7 +209,7 @@ class HomeScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  // Create the report
+                  // Create the report with default activities (all false)
                   context.read<ReportBloc>().add(
                     CreateReport(
                       supervisorName: supervisorNameController.text,
@@ -258,6 +229,6 @@ class HomeScreen extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+    return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

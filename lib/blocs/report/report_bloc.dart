@@ -31,11 +31,15 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     try {
       emit(const ReportLoading());
       final reports = await _reportRepository.getAllReports();
+      // Sort reports by date, newest first
+      reports.sort((a, b) => b.date.compareTo(a.date));
       emit(ReportsLoaded(reports));
     } catch (e) {
       emit(ReportOperationFailure('Failed to load reports: ${e.toString()}'));
     }
   }
+
+
 
   Future<void> _onLoadReport(LoadReport event, Emitter<ReportState> emit) async {
     try {
@@ -72,8 +76,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       
       emit(ReportOperationSuccess('Report created successfully'));
       
-      // Load the newly created report
-      add(LoadReport(report.id));
+      // Load all reports to update the list with the newly created report
+      add(const LoadReports());
     } catch (e) {
       emit(ReportOperationFailure('Failed to create report: ${e.toString()}'));
     }

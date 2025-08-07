@@ -36,7 +36,7 @@ UI (Widgets) ↔ BLoC ↔ Repositorios ↔ Fuentes de Datos (Local/Remoto)
 
 ### 1. Creación de Reporte Diario
 - **Pantalla de inicio de reporte**
-  - Formulario para datos básicos (nombre del supervisor, fecha, asunto)
+  - Formulario para datos básicos (nombre del supervisor, fecha y hora, asunto)
   - Selección de acciones realizadas mediante checkboxes
   - Almacenamiento local de datos del reporte
 
