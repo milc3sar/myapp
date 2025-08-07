@@ -1,0 +1,42 @@
+targets:
+  $default:
+    builders:
+      # Configure the json_serializable builder
+      json_serializable:
+        options:
+          # Enable explicit to/from JSON for better type safety
+          explicit_to_json: true
+          # Include if null values in the JSON output
+          include_if_null: false
+          # Use field names as they are (don't convert to camelCase)
+          field_rename: none
+          # Create toJson methods for all classes
+          create_to_json: true
+          # Create fromJson methods for all classes
+          create_factory: true
+          # Handle DateTime serialization
+          any_map: false
+          checked: false
+          create_field_map: false
+          disallow_unrecognized_keys: false
+          
+      # Configure the freezed builder
+      freezed:
+        options:
+          # Generate copyWith methods
+          copy_with: true
+          # Generate equality operators
+          equal: true
+          # Generate toString methods
+          to_string: true
+          # Generate fromJson/toJson methods
+          map: true
+          # Generate when/map methods for pattern matching
+          union_key: runtimeType
+          union_value_case: snake
+          # Generate mutable classes (false for immutable)
+          mutable: false
+          # Generate constructor with positional parameters
+          constructor: true
+          # Generate late fields
+          late_final: true

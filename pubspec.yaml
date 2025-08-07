@@ -1,0 +1,73 @@
+name: supervisor
+description: "app para tomar fotos, obtener ubicacion y agregarle un contexto"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Iconos de estilo iOS
+  cupertino_icons: ^1.0.8
+  
+  # Gestión de Estado - Implementación del patrón BLoC
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.5  # Para comparación de estados y eventos en BLoC
+
+  # Almacenamiento Local - Base de datos NoSQL ligera y rápida
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Manejo de Imágenes - Para seleccionar imágenes de la galería o cámara
+  image_picker: ^1.0.7
+
+  # Generación de PDF - Para crear documentos PDF
+  pdf: ^3.11.3
+
+#  # Reconocimiento de Voz - Para convertir voz a texto
+  speech_to_text: 7.1.0
+
+  # Compartir Archivos - Para compartir informes PDF
+  share_plus: ^11.0.0
+
+  # Manejo de Permisos - Para la gestión de permisos de cámara, micrófono y almacenamiento
+  permission_handler: ^12.0.1
+
+  # Validación de Formularios - Para la validación de datos de entrada
+  formz: ^0.7.0
+
+  # Generación de IDs únicos - Para crear identificadores únicos
+  uuid: ^4.3.3
+
+  # Geolocalización - Para acceder a la ubicación del dispositivo
+  geolocator: ^14.0.2
+  # Mapas - Widget de mapa para Flutter basado en leaflet.js
+  flutter_map: ^6.1.0
+  json_annotation: ^4.9.0
+  freezed_annotation: ^3.1.0
+
+dev_dependencies:
+  freezed: ^3.2.0
+  flutter_test:
+    sdk: flutter
+
+  # Conjunto de lints recomendados para buenas prácticas de codificación
+  flutter_lints: ^5.0.0
+  json_serializable: ^6.10.0
+  build_runner: ^2.6.0
+
+flutter:
+  # Incluye Material Icons para usar en la aplicación
+  uses-material-design: true
+
+  # Configuración de assets (comentado para uso futuro)
+  # assets:
+  #   - images/example.jpeg
+
+# This is a direct command to Flutter to ignore all other requests
+# and ONLY use version 7.1.0 of this package.
+dependency_overrides:
+  speech_to_text: 7.1.0
