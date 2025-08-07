@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:supervisor/blocs/report/report_bloc.dart';
 import 'package:supervisor/blocs/report/report_event.dart';
 import 'package:supervisor/blocs/report/report_state.dart';
+import 'package:supervisor/blocs/pdf/pdf_bloc.dart';
+import 'package:supervisor/blocs/pdf/pdf_event.dart';
+import 'package:supervisor/blocs/pdf/pdf_state.dart';
 import 'package:supervisor/domain/entities/report_entity.dart';
 import 'package:supervisor/domain/entities/supply_entity.dart';
 import 'package:uuid/uuid.dart';
@@ -111,22 +114,63 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
                   ),
                   SizedBox(
                     width: 160, // Fixed width for both buttons
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // This is a placeholder for the "Generate PDF" functionality
-                        // Not implementing as per requirements
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Funcionalidad de informar (PDF) no implementada'),
+                    child: BlocConsumer<PdfBloc, PdfState>(
+                      listener: (context, state) {
+                        if (state is PdfGenerated) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('PDF generado exitosamente: ${state.pdfPath}'),
+                              backgroundColor: Colors.green,
+                              action: SnackBarAction(
+                                label: 'Compartir',
+                                onPressed: () {
+                                  context.read<PdfBloc>().add(SharePdf(
+                                    pdfPath: state.pdfPath,
+                                    shareMethod: 'general',
+                                  ));
+                                },
+                              ),
+                            ),
+                          );
+                        } else if (state is PdfOperationFailure) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error al generar PDF: ${state.message}'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (state is PdfShared) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: Colors.blue,
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, pdfState) {
+                        final isGenerating = pdfState is PdfGenerating;
+                        return ElevatedButton.icon(
+                          onPressed: isGenerating ? null : () {
+                            context.read<PdfBloc>().add(GeneratePdfWithReport(_report));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
                           ),
+                          icon: isGenerating 
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : const Icon(Icons.picture_as_pdf),
+                          label: Text(isGenerating ? 'Generando...' : 'Informar'),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red, // Red background for the button
-                        foregroundColor: Colors.white, // White text and icon
-                      ),
-                      icon: const Icon(Icons.picture_as_pdf),
-                      label: const Text('Informar'),
                     ),
                   ),
                 ],
