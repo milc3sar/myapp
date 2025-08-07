@@ -9,11 +9,13 @@ import 'package:supervisor/blocs/supply/supply_state.dart';
 import 'package:supervisor/data/datasources/local_storage.dart';
 import 'package:supervisor/domain/repositories/report_repository.dart';
 import 'package:supervisor/domain/repositories/supply_repository.dart';
+import 'package:supervisor/services/pdf_service.dart';
 
 // Mock classes for testing
 class MockLocalStorage extends Mock implements LocalStorage {}
 class MockSupplyRepository extends Mock implements SupplyRepository {}
 class MockReportRepository extends Mock implements ReportRepository {}
+class MockPdfService extends Mock implements PdfService {}
 
 void main() {
   group('BLoC Architecture Tests', () {
@@ -40,7 +42,11 @@ void main() {
 
     test('PdfBloc can be instantiated', () {
       final mockReportRepository = MockReportRepository();
-      final pdfBloc = PdfBloc(reportRepository: mockReportRepository);
+      final mockPdfService = MockPdfService();
+      final pdfBloc = PdfBloc(
+        reportRepository: mockReportRepository,
+        pdfService: mockPdfService,
+      );
       expect(pdfBloc, isNotNull);
       expect(pdfBloc.state, isA<PdfInitial>());
     });

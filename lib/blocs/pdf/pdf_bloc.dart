@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:supervisor/domain/repositories/report_repository.dart';
+import 'package:supervisor/services/pdf_service.dart';
 
 import 'pdf_event.dart';
 import 'pdf_state.dart';
@@ -7,9 +9,13 @@ import 'pdf_state.dart';
 /// BLoC for managing PDF-related operations
 class PdfBloc extends Bloc<PdfEvent, PdfState> {
   final ReportRepository _reportRepository;
+  final PdfService _pdfService;
 
-  PdfBloc({required ReportRepository reportRepository})
-      : _reportRepository = reportRepository,
+  PdfBloc({
+    required ReportRepository reportRepository,
+    required PdfService pdfService,
+  })  : _reportRepository = reportRepository,
+        _pdfService = pdfService,
         super(const PdfInitial()) {
     on<GeneratePdf>(_onGeneratePdf);
     on<GeneratePdfWithReport>(_onGeneratePdfWithReport);
@@ -28,15 +34,8 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
         return;
       }
       
-      // TODO: Implement PDF generation using a PDF service
-      // This is a placeholder implementation
-      // In a real implementation, we would use a PDF service to generate the PDF
-      
-      // For now, we'll just simulate PDF generation with a delay
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Simulate a PDF path
-      final pdfPath = '/storage/emulated/0/Download/report_${report.id}.pdf';
+      // Generate PDF using the PDF service
+      final pdfPath = await _pdfService.generatePdfReport(report);
       
       // Update the report with the PDF path
       await _reportRepository.setPdfPathForReport(report.id, pdfPath);
@@ -51,15 +50,8 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     try {
       emit(const PdfGenerating());
       
-      // TODO: Implement PDF generation using a PDF service
-      // This is a placeholder implementation
-      // In a real implementation, we would use a PDF service to generate the PDF
-      
-      // For now, we'll just simulate PDF generation with a delay
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Simulate a PDF path
-      final pdfPath = '/storage/emulated/0/Download/report_${event.report.id}.pdf';
+      // Generate PDF using the PDF service
+      final pdfPath = await _pdfService.generatePdfReport(event.report);
       
       // Update the report with the PDF path
       await _reportRepository.setPdfPathForReport(event.report.id, pdfPath);
@@ -74,12 +66,11 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     try {
       emit(const PdfSharing());
       
-      // TODO: Implement PDF sharing using the Share Plus package
-      // This is a placeholder implementation
-      // In a real implementation, we would use the Share Plus package to share the PDF
-      
-      // For now, we'll just use the Share.shareFiles method
-      // await Share.shareFiles([event.pdfPath], text: 'Sharing report PDF');
+      // Share the PDF file using share_plus package
+      await Share.shareXFiles(
+        [XFile(event.pdfPath)],
+        text: 'Informe GPC - Supervisión de actividades',
+      );
       
       emit(const PdfShared('PDF shared successfully'));
     } catch (e) {
