@@ -34,7 +34,14 @@ UI (Widgets) ↔ BLoC ↔ Repositorios ↔ Fuentes de Datos (Local/Remoto)
 
 ## Desglose de Funcionalidades
 
-### 1. Creación de Reporte Diario
+### 1. Gestión de Permisos
+- **Solicitud de permisos en primer inicio**
+  - Verificación de si es la primera vez que se inicia la aplicación
+  - Diálogo explicativo de los permisos necesarios
+  - Solicitud de permisos de cámara, micrófono, ubicación y almacenamiento
+  - Almacenamiento del estado de solicitud de permisos
+
+### 2. Creación de Reporte Diario
 - **Pantalla de inicio de reporte**
   - Formulario para datos básicos (nombre del supervisor, fecha y hora, asunto)
   - Selección de acciones realizadas mediante checkboxes

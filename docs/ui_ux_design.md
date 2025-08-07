@@ -7,23 +7,50 @@ Este documento describe el diseño de la interfaz de usuario y la experiencia de
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
 │                 │     │                 │     │                 │
-│  Pantalla de    │     │  Formulario de  │     │  Lista de       │
-│  Inicio         │────▶│  Reporte        │────▶│  Suministros    │
-│                 │     │                 │     │                 │
+│  Solicitud de   │     │  Pantalla de    │     │  Formulario de  │
+│  Permisos       │────▶│  Inicio         │────▶│  Reporte        │
+│  (Primera vez)  │     │                 │     │                 │
 └─────────────────┘     └─────────────────┘     └────────┬────────┘
                                                          │
                                                          ▼
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
 │                 │     │                 │     │                 │
-│  Compartir      │     │  Previsualizar  │     │  Registro de    │
-│  PDF            │◀────│  PDF            │◀────│  Evidencias     │
+│  Lista de       │     │  Registro de    │     │  Previsualizar  │
+│  Suministros    │────▶│  Evidencias     │────▶│  PDF            │
 │                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+└────────┬────────┘     └─────────────────┘     └────────┬────────┘
+         │                                               │
+         ▼                                               ▼
+┌─────────────────┐                             ┌─────────────────┐
+│                 │                             │                 │
+│  Compartir      │                             │  Compartir      │
+│  PDF            │                             │  PDF            │
+│                 │                             │                 │
+└─────────────────┘                             └─────────────────┘
 ```
 
 ## Descripción de Pantallas
 
-### 1. Pantalla de Inicio
+### 1. Diálogo de Solicitud de Permisos
+
+**Descripción**: Diálogo que se muestra la primera vez que se inicia la aplicación para solicitar los permisos necesarios.
+
+**Elementos UI**:
+- Título informativo
+- Texto explicativo de los permisos requeridos
+- Lista de permisos con su justificación:
+  - Cámara: para tomar fotos de evidencias
+  - Micrófono: para grabar notas de voz
+  - Ubicación: para registrar la ubicación de las evidencias
+  - Almacenamiento: para guardar fotos y documentos
+- Botones de "Cancelar" y "Continuar"
+
+**Interacciones**:
+- Al pulsar "Continuar", se solicitan los permisos del sistema
+- Al pulsar "Cancelar", se cierra el diálogo pero la aplicación continúa funcionando con funcionalidad limitada
+- Los permisos solo se solicitan la primera vez que se inicia la aplicación
+
+### 2. Pantalla de Inicio
 
 **Descripción**: Pantalla principal que muestra los reportes recientes y permite crear uno nuevo.
 

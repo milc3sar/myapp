@@ -44,9 +44,18 @@ class ReportRepositoryImpl implements ReportRepository {
       throw Exception('Report not found');
     }
 
-    final updatedSupplies = [...report.supplies, _mapEntityToSupply(supply)];
+    // Convert the supply entity to a model
+    final supplyModel = _mapEntityToSupply(supply);
+    
+    // Add the supply to the report
+    final updatedSupplies = [...report.supplies, supplyModel];
     final updatedReport = report.copyWith(supplies: updatedSupplies);
+    
+    // Save the report with the new supply
     await _localStorage.saveReport(updatedReport);
+    
+    // Also save the supply as an independent entity in _suppliesBox
+    await _localStorage.saveSupply(supplyModel);
   }
 
   @override
@@ -56,9 +65,13 @@ class ReportRepositoryImpl implements ReportRepository {
       throw Exception('Report not found');
     }
 
+    // Remove the supply from the report
     final updatedSupplies = report.supplies.where((s) => s.id != supplyId).toList();
     final updatedReport = report.copyWith(supplies: updatedSupplies);
     await _localStorage.saveReport(updatedReport);
+    
+    // Also remove the supply from _suppliesBox
+    await _localStorage.deleteSupply(supplyId);
   }
 
   @override
@@ -68,12 +81,20 @@ class ReportRepositoryImpl implements ReportRepository {
       throw Exception('Report not found');
     }
 
+    // Convert the supply entity to a model
+    final supplyModel = _mapEntityToSupply(supply);
+    
+    // Update the supply in the report
     final updatedSupplies = report.supplies.map((s) {
-      return s.id == supply.id ? _mapEntityToSupply(supply) : s;
+      return s.id == supply.id ? supplyModel : s;
     }).toList();
     
+    // Save the report with the updated supply
     final updatedReport = report.copyWith(supplies: updatedSupplies);
     await _localStorage.saveReport(updatedReport);
+    
+    // Also update the supply as an independent entity in _suppliesBox
+    await _localStorage.saveSupply(supplyModel);
   }
 
   @override

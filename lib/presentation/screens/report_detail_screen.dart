@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supervisor/blocs/report/report_bloc.dart';
 import 'package:supervisor/blocs/report/report_event.dart';
 import 'package:supervisor/blocs/report/report_state.dart';
@@ -83,34 +84,9 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
             }
             return _buildReportDetails(context, _report);
           } else {
-            // Show empty state instead of error screen
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.description_outlined,
-                    size: 80,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No se pudo cargar el reporte',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[700],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ReportBloc>().add(LoadReport(widget.reportId));
-                    },
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              ),
+            // Show loading indicator instead of error message during transitions
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           }
         },
@@ -317,11 +293,13 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
       subtitle: Text('Evidencias: ${supply.evidences.length}'),
       trailing: const Icon(Icons.chevron_right),
       onTap: () {
-        // Navigate to supply detail screen (not implemented)
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Navegación a detalles de suministro no implementada'),
-          ),
+        // Navigate to evidence screen for this supply
+        context.goNamed(
+          'evidence_screen',
+          pathParameters: {
+            'reportId': widget.reportId,
+            'supplyId': supply.id,
+          },
         );
       },
     );

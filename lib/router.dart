@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supervisor/blocs/report/report_bloc.dart';
 import 'package:supervisor/blocs/report/report_event.dart';
+import 'package:supervisor/presentation/screens/evidence_screen.dart';
 import 'package:supervisor/presentation/screens/home_screen.dart';
 import 'package:supervisor/presentation/screens/report_detail_screen.dart';
 
@@ -46,6 +47,17 @@ final GoRouter router = GoRouter(
             final reportId = state.pathParameters['reportId']!;
             return ReportDetailScreen(reportId: reportId);
           },
+          routes: [
+            // Evidence screen - shows evidences for a specific supply
+            GoRoute(
+              path: 'supply/:supplyId/evidences',
+              name: 'evidence_screen',
+              builder: (context, state) {
+                final supplyId = state.pathParameters['supplyId']!;
+                return EvidenceScreen(supplyId: supplyId);
+              },
+            ),
+          ],
         ),
       ],
     ),

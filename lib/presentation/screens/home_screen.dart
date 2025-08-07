@@ -5,6 +5,7 @@ import 'package:supervisor/blocs/report/report_bloc.dart';
 import 'package:supervisor/blocs/report/report_event.dart';
 import 'package:supervisor/blocs/report/report_state.dart';
 import 'package:supervisor/domain/entities/report_entity.dart';
+import 'package:supervisor/services/permissions_service.dart';
 
 /// Home screen of the application
 /// Shows a list of recent reports and allows creating a new one
@@ -16,11 +17,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late final PermissionsService _permissionsService;
+
   @override
   void initState() {
     super.initState();
+    // Initialize permissions service
+    _permissionsService = PermissionsService.fromDefaultBox();
+    
+    // Check if permissions have been requested before
+    _checkAndRequestPermissions();
+    
     // Load reports when the screen is first built
     context.read<ReportBloc>().add(const LoadReports());
+  }
+  
+  /// Check if permissions have been requested before and request them if needed
+  Future<void> _checkAndRequestPermissions() async {
+    // Only request permissions if they haven't been requested before
+    if (!_permissionsService.permissionsRequested) {
+      // Show explanation dialog first
+      final shouldProceed = await _permissionsService.showPermissionExplanationDialog(context);
+      
+      if (shouldProceed) {
+        // Request all permissions
+        await _permissionsService.requestAllPermissions();
+        
+        // Mark permissions as requested so we don't ask again
+        await _permissionsService.markPermissionsAsRequested();
+      }
+    }
   }
 
   @override
